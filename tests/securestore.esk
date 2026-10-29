@@ -1,0 +1,59 @@
+// <securestore> with no device: the platform's side is an in-memory stand-in, so the test
+// checks the wrapper's contract (copies, null for a missing key, replacing, removing).
+import <io>;
+import <mem>;
+import <string>;
+import <list>;
+import <ui>;
+import <securestore>;
+
+List<string> keys;
+List<string> values;
+
+int find(string key) {
+    for (i in 0..keys.size) { if (strcmp(keys.data[i], key) == 0) return i; }
+    return -1;
+}
+
+string secure_native_get(string key) {
+    int at = find(key);
+    return at < 0 ? null : ui_copy(values.data[at]);
+}
+int secure_native_set(string key, string value) {
+    int at = find(key);
+    if (at >= 0) { free(values.data[at]); values.data[at] = ui_copy(value); return 1; }
+    keys.push(ui_copy(key));
+    values.push(ui_copy(value));
+    return 1;
+}
+int secure_native_remove(string key) {
+    int at = find(key);
+    if (at >= 0) { free(keys.data[at]); free(values.data[at]); keys.remove(at); values.remove(at); }
+    return 1;
+}
+int secure_native_is_secure() { return 1; }
+
+void check(bool ok, string what) {
+    if (!ok) { printf("FAIL %s\n", what); exit(1); }
+}
+
+int main() {
+    check(secure_get("session") == null, "nothing kept at first");
+    check(secure_set("session", "abc"), "set");
+    string got = secure_get("session");
+    check(got != null && strcmp(got, "abc") == 0, "read back");
+    free(got);
+    check(secure_set("session", "def"), "replace");
+    got = secure_get("session");
+    check(strcmp(got, "def") == 0, "the new value");
+    free(got);
+    check(secure_set("empty", null), "a null value is kept as empty");
+    got = secure_get("empty");
+    check(got != null && got[0] == 0, "empty");
+    free(got);
+    check(secure_remove("session") && secure_get("session") == null, "removed");
+    check(!secure_set(null, "x") && secure_get(null) == null && !secure_remove(null), "a null key is refused");
+    check(secure_is_secure(), "secure");
+    printf("PASS securestore\n");
+    return 0;
+}

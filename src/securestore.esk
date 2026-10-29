@@ -1,0 +1,33 @@
+// <securestore>: small secrets kept by the platform's secure storage, for apps on
+// eskiu-lang/ui: a session token, a refresh token, a key. The iOS Keychain (this device only,
+// readable after the first unlock), and on Android values encrypted with an AES-GCM key held by
+// the Android Keystore, the key never leaving it. The web and the desktop have no such store:
+// there a value goes to localStorage, in the clear (secure_is_secure says so).
+//
+//     secure_set("session", token);
+//     string token = secure_get("session");    // null when there is none; free it
+//     defer free(token);
+import <mem>;
+import <ui>;
+
+// The platform's side (native/ios, native/android, native/web). Keys and values are text.
+// secure_native_get returns a copy the caller frees, or null; set returns 1 when it was kept.
+extern string secure_native_get(string key);
+extern int secure_native_set(string key, string value);
+extern int secure_native_remove(string key);
+extern int secure_native_is_secure();
+
+// The value kept under `key`, a copy the caller frees, or null when there is none.
+string secure_get(string key) { return key == null ? null : secure_native_get(key); }
+
+// Keeps `value` under `key`, replacing what was there; false when the platform refused.
+bool secure_set(string key, string value) {
+    if (key == null) { return false; }
+    return secure_native_set(key, value == null ? "" : value) != 0;
+}
+
+// Forgets `key`; true when nothing is kept under it afterwards.
+bool secure_remove(string key) { return key != null && secure_native_remove(key) != 0; }
+
+// Whether values are kept encrypted by the platform (iOS, Android), not in the clear (web).
+bool secure_is_secure() { return secure_native_is_secure() != 0; }

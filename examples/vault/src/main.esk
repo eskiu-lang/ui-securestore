@@ -1,0 +1,34 @@
+// Vault: a token kept in the platform's secure storage across launches, from <securestore>.
+// `ui run ios` or `ui run android`.
+import <string>;
+import <ui>;
+import <ui/kit>;
+import <securestore>;
+
+void Demo() {
+    *Signal<int> version = use_signal<int>(0);
+    version.get();
+    string token = secure_get("session");
+    Column(Style{grow: 1, padding: 24, gap: 16, justify: JustifyCenter, background: kit.page}) {
+        Card() {
+            Secondary(secure_is_secure() ? "Kept encrypted by the platform" : "Kept in the clear (no secure store here)");
+            TextWith(Style{font_size: 20, font_weight: 700, color: kit.ink}, token == null ? "No session" : token);
+            Button("Sign in") {
+                secure_set("session", "token-4f2a9c");
+                version.set(version.get() + 1);
+            }
+            Button("Sign out") {
+                secure_remove("session");
+                version.set(version.get() + 1);
+            }
+        }
+    }
+    free(token);
+}
+
+void ui_app_start(int which) {
+    kit_follow_system();
+    ui_mount() { Demo(); }
+}
+
+void ui_app_stop() {}
