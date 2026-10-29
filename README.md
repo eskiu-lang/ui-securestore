@@ -34,6 +34,14 @@ It is for tokens and keys, not for data: a value is read whole on each call.
 
 `examples/vault` keeps a session token across launches (`ui run ios` or `ui run android`).
 
+
+## Install
+
+In an app made with `ui new`:
+
+```bash
+eskiuc add securestore --git https://github.com/eskiu-lang/ui-securestore --rev v0.1.0
+```
 ## Tests
 
 `eskiuc test` checks the calls against an in-memory stand-in for the platform.
