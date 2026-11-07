@@ -5,8 +5,8 @@
 // there a value goes to localStorage, in the clear (secure_is_secure says so).
 //
 //     secure_set("session", token);
-//     string token = secure_get("session");    // null when there is none; free it
-//     defer free(token);
+//     string saved = secure_get("session");    // null when there is none; free it
+//     defer free(saved);
 import <mem>;
 import <ui>;
 
