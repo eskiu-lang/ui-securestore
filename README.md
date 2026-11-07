@@ -12,8 +12,8 @@
 import <securestore>;
 
 secure_set("session", token);
-string token = secure_get("session");   // null when there is none; free it
-defer free(token);
+string saved = secure_get("session");   // null when there is none; free it
+defer free(saved);
 secure_remove("session");
 ```
 
@@ -34,6 +34,10 @@ It is for tokens and keys, not for data: a value is read whole on each call.
 
 `examples/vault` keeps a session token across launches (`ui run ios` or `ui run android`).
 
+
+## Documentation
+
+Every public function and type, with its documentation, is in the [API reference](docs/api.md).
 
 ## Install
 
