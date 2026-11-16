@@ -44,7 +44,7 @@ Every public function and type, with its documentation, is in the [API reference
 In an app made with `ui new`:
 
 ```bash
-eskiuc add securestore --git https://github.com/eskiu-lang/ui-securestore --rev v0.1.0
+eskiuc add securestore --git https://github.com/eskiu-lang/ui-securestore --rev v0.1.1
 ```
 ## Tests
 
