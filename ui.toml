@@ -1,3 +1,5 @@
 # What an app that depends on this package gets.
 [ios]
 frameworks = ["Security"]
+[macos]
+frameworks = ["Security"]
