@@ -24,3 +24,5 @@ All notable changes to this package are documented in this file. The format is b
 
 - Native desktop builds of an app using the package link (before, the externs were missing on
   macOS, Linux and Windows).
+- iOS and macOS: setting a key to an empty value kept the old value (an update to empty data
+  leaves the Keychain item as it was); the item is replaced now.
