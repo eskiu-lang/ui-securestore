@@ -69,8 +69,10 @@ int secure_native_set(const char *key, const char *value) {
     OSStatus status = keychain(^OSStatus(NSMutableDictionary *q) {
         NSMutableDictionary *update = [@{(__bridge id)kSecValueData: data} mutableCopy];
         if (!legacy) update[(__bridge id)kSecAttrAccessible] = (__bridge id)kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-        OSStatus s = SecItemUpdate((__bridge CFDictionaryRef)q, (__bridge CFDictionaryRef)update);
-        if (s == errSecItemNotFound) {
+        // An update to empty data leaves the old value, so an empty value replaces the item.
+        OSStatus s = data.length ? SecItemUpdate((__bridge CFDictionaryRef)q, (__bridge CFDictionaryRef)update)
+                                 : SecItemDelete((__bridge CFDictionaryRef)q);
+        if (s == errSecItemNotFound || (s == errSecSuccess && !data.length)) {
             [q addEntriesFromDictionary:update];
             s = SecItemAdd((__bridge CFDictionaryRef)q, NULL);
         }
