@@ -1,5 +1,5 @@
 // Vault: a token kept in the platform's secure storage across launches, from <securestore>.
-// `ui run ios` or `ui run android`.
+// `ui run ios`, `ui run android`, `ui run macos`, `ui run linux` or `ui run windows`.
 import <string>;
 import <ui>;
 import <ui/kit>;
